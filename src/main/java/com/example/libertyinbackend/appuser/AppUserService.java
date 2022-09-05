@@ -1,5 +1,6 @@
 package com.example.libertyinbackend.appuser;
 
+import com.example.libertyinbackend.appuser.userprofile.UserProfileRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ public class AppUserService implements UserDetailsService {
     private final static String USER_NOT_FOUND_MSG = "user with email %s not found";
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AppUserRepository appUserRepository;
+    private final UserProfileRepository userProfileRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email)
@@ -42,6 +44,10 @@ public class AppUserService implements UserDetailsService {
 
         appUser.setPassword(encodedPassword);
         appUserRepository.save(appUser);
+        appUser.getUserProfile().setEmail(appUser.getEmail());
+        appUser.getUserProfile().setFirstName(appUser.getFirstName());
+        appUser.getUserProfile().setFirstName(appUser.getLastName());
+        userProfileRepository.save(appUser.getUserProfile());
 
         //TODO: Send confirmation token
         return "It works";

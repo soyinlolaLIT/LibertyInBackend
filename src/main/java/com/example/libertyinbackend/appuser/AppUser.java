@@ -44,10 +44,6 @@ public class AppUser implements UserDetails {
     @Enumerated(EnumType.STRING)
     private AppUserRole role;
 
-    @OneToOne
-    @JoinColumn(name = "profile_id")
-    private UserProfile userProfile;
-
 
     public AppUser(String firstName,
                    String lastName,
@@ -103,6 +99,11 @@ public class AppUser implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_id")
+    private UserProfile userProfile = new UserProfile();
+
 
 
 }

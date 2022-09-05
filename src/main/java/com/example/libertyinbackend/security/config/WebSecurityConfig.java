@@ -38,7 +38,7 @@ public class WebSecurityConfig {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers("/api/v*/registration/**","/api/v*/token/refresh","/login").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/v*/users").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
+        http.authorizeRequests().antMatchers(GET, "/api/v*/users","/api/v*/account").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(new CustomAuthenticationFilter(daoAuthenticationProvider()));
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

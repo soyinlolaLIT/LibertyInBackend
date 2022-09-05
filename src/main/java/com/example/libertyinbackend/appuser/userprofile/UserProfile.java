@@ -25,34 +25,38 @@ public class UserProfile {
     //6. team members
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "team_id")
     private Team teamName;
 
     @ElementCollection
-    @CollectionTable(name = "user_profile_skills", joinColumns = @JoinColumn(name = "user_skills"))
+    @CollectionTable(name = "user_profile_skills", joinColumns = @JoinColumn(name = "user_id"))
     private Collection<String> skills = new ArrayList<>();
     @ElementCollection
-    @CollectionTable(name = "user_profile_certifications", joinColumns = @JoinColumn(name = "user_certifications"))
+    @CollectionTable(name = "user_profile_certifications", joinColumns = @JoinColumn(name = "user_id"))
     private Collection<String> certifications = new ArrayList<>();
     private String profilePic;
     private String jobTitle;
 
 
     //constructor with only details needed for User creation
-    public UserProfile(AppUser appUser){
-        this.id = appUser.getId();
-        this.firstName = appUser.getFirstName();
-        this.lastName = appUser.getLastName();
-        this.email = appUser.getEmail();
-        this.password = appUser.getPassword();
+    public UserProfile(String firstName,
+                       String lastName,
+                       String email){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
+    public String getUsername(){
+        return email;
     }
 
     public void addSkill(String skill){

@@ -30,6 +30,7 @@ public class Team {
     private Long id;
     private String name;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "members", referencedColumnName = "id")
     private Collection<AppUser> members = new ArrayList<>();
 }

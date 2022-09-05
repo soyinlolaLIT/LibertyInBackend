@@ -11,6 +11,7 @@ import org.apache.catalina.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,6 +41,11 @@ public class AppUserController {
     @GetMapping("/users")
     public ResponseEntity<List<AppUser>> getUsers(){
         return ResponseEntity.ok().body(appUserService.getAllUsers());
+    }
+
+    @GetMapping("/account")
+    public ResponseEntity<AppUser> getAccount(Authentication authentication){
+        return ResponseEntity.ok().body((AppUser)appUserService.loadUserByUsername(authentication.getName()));
     }
 
 
