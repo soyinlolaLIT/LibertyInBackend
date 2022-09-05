@@ -1,6 +1,7 @@
 package com.example.libertyinbackend.appuser;
 
 import com.example.libertyinbackend.appuser.userprofile.UserProfile;
+import com.example.libertyinbackend.appuser.userprofile.team.Team;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.annotation.Resource;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -35,21 +38,27 @@ public class AppUser implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-    @Enumerated(EnumType.STRING)
     private AppUserRole appUserRole;
     private Boolean locked = false;
     private Boolean enabled = true;
+    @Enumerated(EnumType.STRING)
+    private AppUserRole role;
+
+    @OneToOne
+    @JoinColumn(name = "profile_id")
+    private UserProfile userProfile;
+
 
     public AppUser(String firstName,
                    String lastName,
                    String email,
                    String password,
-                   AppUserRole appUserRole){
+                   AppUserRole role){
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.appUserRole = appUserRole;
+        this.appUserRole = role;
     }
 
 
@@ -94,4 +103,6 @@ public class AppUser implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+
+
 }

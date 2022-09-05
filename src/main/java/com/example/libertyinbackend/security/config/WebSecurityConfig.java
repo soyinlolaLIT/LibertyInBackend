@@ -1,7 +1,9 @@
 package com.example.libertyinbackend.security.config;
 
+import com.example.libertyinbackend.appuser.AppUserRole;
 import com.example.libertyinbackend.appuser.AppUserService;
 import com.example.libertyinbackend.filter.CustomAuthenticationFilter;
+import com.example.libertyinbackend.filter.CustomAuthorizationFilter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +18,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -31,16 +35,13 @@ public class WebSecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/api/v*/registration/**")
-                .permitAll()
-                .anyRequest()
-                .authenticated().and()
-                .formLogin();
-
+        http.csrf().disable();
+        http.sessionManagement().sessionCreationPolicy(STATELESS);
+        http.authorizeRequests().antMatchers("/api/v*/registration/**","/api/v*/token/refresh","/login").permitAll();
+        http.authorizeRequests().antMatchers(GET, "/api/v*/users").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
+        http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(new CustomAuthenticationFilter(daoAuthenticationProvider()));
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

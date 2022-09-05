@@ -47,4 +47,11 @@ public class AppUserService implements UserDetailsService {
         return "It works";
     }
 
+    public List<AppUser> getAllUsers() {
+        boolean hasUsers = appUserRepository.findAll().isEmpty();
+        if(!hasUsers == false){
+            throw new IllegalStateException("No users found");
+        }
+        return appUserRepository.findAll();
+    }
 }

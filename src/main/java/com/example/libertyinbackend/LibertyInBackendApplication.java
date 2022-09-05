@@ -20,10 +20,10 @@ public class LibertyInBackendApplication {
         SpringApplication.run(LibertyInBackendApplication.class, args);
     }
 
-    @Bean
-    CommandLineRunner run(AppUserConfig appUserConfig){
-        return args -> {
-            appUserConfig.buildUser();
-        };
-    }
+//    @Bean
+//    CommandLineRunner run(AppUserConfig appUserConfig){
+//        return args -> {
+//            appUserConfig.buildUser();
+//        };
+//    }
 }
