@@ -19,8 +19,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static org.springframework.http.HttpMethod.GET;
+import java.util.List;
+
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -35,15 +40,30 @@ public class WebSecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 
-        http.csrf().disable();
+        http.csrf().disable().cors();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers("/api/v*/registration/**","/api/v*/token/refresh","/login").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/v*/users","/api/v*/account").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
+        http.authorizeRequests().antMatchers(GET, "/api/v*/users**","/api/v*/account**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
+        http.authorizeRequests().antMatchers(POST, "/api/v*/account**","/api/v*/users/**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
+        http.authorizeRequests().antMatchers(PUT, "/api/v*/account**","/api/v*/users/**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
+        http.authorizeRequests().antMatchers(DELETE, "/api/v*/account**","/api/v*/users/**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(new CustomAuthenticationFilter(daoAuthenticationProvider()));
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        final var configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "HEAD", "PATCH"));
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(List.of("*"));
+        final var source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean

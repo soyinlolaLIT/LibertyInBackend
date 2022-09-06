@@ -6,6 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -67,7 +70,7 @@ public class UserProfileService {
         if(!userExists){
             throw new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG,userProfile.getUsername()));
         }else{
-            userProfile.addSkill(skill);
+            userProfile.addSkill(StringUtils.capitalize(skill.toLowerCase()));
             userProfileRepository.save(userProfile);
         }
 
@@ -81,12 +84,58 @@ public class UserProfileService {
         if(!userExists){
             throw new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG,userProfile.getUsername()));
         }else{
-            userProfile.addCertifications(cert);
+            userProfile.addCertifications(StringUtils.capitalize(cert.toLowerCase()));
             userProfileRepository.save(userProfile);
         }
 
         return "works";
     }
 
+    public String removeSkills(UserProfile userProfile, String skill){
+        //firstly does user exist?
 
+        boolean userExists = userProfileRepository.findByEmail(userProfile.getEmail())
+                .isPresent();
+
+        if(!userExists){
+            throw new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG,userProfile.getUsername()));
+        }else{
+            userProfile.removeSkill(StringUtils.capitalize(skill.toLowerCase()));
+            userProfileRepository.save(userProfile);
+        }
+
+        return "works";
+    }
+
+    public String removeCertifications(UserProfile userProfile, String cert){
+        boolean userExists = userProfileRepository.findByEmail(userProfile.getEmail())
+                .isPresent();
+
+        if(!userExists){
+            throw new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG,userProfile.getUsername()));
+        }else{
+            userProfile.removeCertifications(StringUtils.capitalize(cert.toLowerCase()));
+            userProfileRepository.save(userProfile);
+        }
+
+        return "works";
+    }
+
+    public List<UserProfile> findAllByEmail(String email){
+        return userProfileRepository.findAllByEmailContainsIgnoreCase(email);
+    }
+    public List<UserProfile> findAllByJobTitle(String title){
+        return userProfileRepository.findAllByJobTitleContainsIgnoreCase(title);
+    }
+    public List<UserProfile> findAllByCertification(String cert){
+        return userProfileRepository.findAllByCertificationsContainsIgnoreCase(cert);
+    }
+    public List<UserProfile> findAllBySkill(String skill){
+        return userProfileRepository.findAllBySkillsContainsIgnoreCase(skill);
+    }
+
+
+    public List<UserProfile> findAll() {
+        return userProfileRepository.findAll();
+    }
 }

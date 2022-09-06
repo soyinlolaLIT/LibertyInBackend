@@ -8,6 +8,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -60,12 +61,28 @@ public class UserProfile {
     }
 
     public void addSkill(String skill){
-        skills.add(skill);
+        if(!skills.contains(skill)){
+            skills.add(skill);
+        }
     }
 
     public void addCertifications(String cert){
-        certifications.add(cert);
+        if(!certifications.contains(cert)){
+            certifications.add(cert);
+        }
     }
 
+
+    public void removeSkill(String skill) {
+        if(skills.contains(skill)){
+            skills.remove(skill);
+        }
+    }
+
+    public void removeCertifications(String cert) {
+        if(certifications.contains(cert)){
+            certifications.remove(cert);
+        }
+    }
 
 }

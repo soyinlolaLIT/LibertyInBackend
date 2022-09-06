@@ -46,7 +46,7 @@ public class AppUserService implements UserDetailsService {
         appUserRepository.save(appUser);
         appUser.getUserProfile().setEmail(appUser.getEmail());
         appUser.getUserProfile().setFirstName(appUser.getFirstName());
-        appUser.getUserProfile().setFirstName(appUser.getLastName());
+        appUser.getUserProfile().setLastName(appUser.getLastName());
         userProfileRepository.save(appUser.getUserProfile());
 
         //TODO: Send confirmation token
