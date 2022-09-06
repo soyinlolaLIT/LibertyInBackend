@@ -42,12 +42,12 @@ public class WebSecurityConfig {
 
         http.csrf().disable().cors();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests().antMatchers("/api/v*/registration/**","/api/v*/token/refresh","/login").permitAll();
-        http.authorizeRequests().antMatchers(GET, "/api/v*/users**","/api/v*/account**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
-        http.authorizeRequests().antMatchers(POST, "/api/v*/account**","/api/v*/users/**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
-        http.authorizeRequests().antMatchers(PUT, "/api/v*/account**","/api/v*/users/**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
-        http.authorizeRequests().antMatchers(DELETE, "/api/v*/account**","/api/v*/users/**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
-        http.authorizeRequests().anyRequest().authenticated();
+        http.cors().and().authorizeRequests().antMatchers("/api/v*/registration/**","/api/v*/token/refresh","/login").permitAll();
+        http.cors().and().authorizeRequests().antMatchers(GET, "/api/v*/users**","/api/v*/account**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
+        http.cors().and().authorizeRequests().antMatchers(POST, "/api/v*/account**","/api/v*/users/**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
+        http.cors().and().authorizeRequests().antMatchers(PUT, "/api/v*/account**","/api/v*/users/**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
+        http.cors().and().authorizeRequests().antMatchers(DELETE, "/api/v*/account**","/api/v*/users/**").hasAnyAuthority(AppUserRole.USER.name(),AppUserRole.ADMIN.name());
+        http.cors().and().authorizeRequests().anyRequest().authenticated();
         http.addFilter(new CustomAuthenticationFilter(daoAuthenticationProvider()));
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
