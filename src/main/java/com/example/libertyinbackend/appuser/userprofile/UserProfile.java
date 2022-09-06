@@ -33,7 +33,7 @@ public class UserProfile {
     private String lastName;
     private String email;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "team_id")
     private Team teamName;
 

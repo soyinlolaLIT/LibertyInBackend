@@ -1,6 +1,7 @@
 package com.example.libertyinbackend.appuser.userprofile.team;
 
 import com.example.libertyinbackend.appuser.AppUser;
+import com.example.libertyinbackend.appuser.userprofile.UserProfile;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -30,7 +32,11 @@ public class Team {
     private Long id;
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "UserProfile", cascade = CascadeType.ALL)
     @JoinColumn(name = "members", referencedColumnName = "id")
-    private Collection<AppUser> members = new ArrayList<>();
+    private Collection<UserProfile> members = new ArrayList<>();
+
+    public void addMember(UserProfile appUser){
+        members.add(appUser);
+    }
 }
