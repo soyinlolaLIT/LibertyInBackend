@@ -32,7 +32,7 @@ public class Team {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "UserProfile", cascade = CascadeType.ALL)
+    @OneToMany( cascade = CascadeType.ALL)
     @JoinColumn(name = "members", referencedColumnName = "id")
     private Collection<UserProfile> members = new ArrayList<>();
 
