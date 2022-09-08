@@ -1,9 +1,12 @@
 package com.example.libertyinbackend.appuser.userprofile;
 
-import com.example.libertyinbackend.appuser.AppUser;
+import com.example.libertyinbackend.appuser.userprofile.misc.certifications.Certification;
+import com.example.libertyinbackend.appuser.userprofile.misc.certifications.CertificationService;
+import com.example.libertyinbackend.appuser.userprofile.misc.skills.Skill;
+import com.example.libertyinbackend.appuser.userprofile.misc.skills.SkillService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -18,7 +21,9 @@ public class UserProfileService {
 
     private final static String USER_NOT_FOUND_MSG = "user with email %s not found";
 
+    @Autowired
     private final UserProfileRepository userProfileRepository;
+
 
     //Grab a user profile
     public UserProfile loadUserByUsername(String email)
@@ -61,7 +66,7 @@ public class UserProfileService {
         return "works";
     }
 
-    public String addSkills(UserProfile userProfile, String skill){
+    public String addSkills(UserProfile userProfile, Skill skill){
         //firstly does user exist?
 
         boolean userExists = userProfileRepository.findByEmail(userProfile.getEmail())
@@ -70,28 +75,28 @@ public class UserProfileService {
         if(!userExists){
             throw new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG,userProfile.getUsername()));
         }else{
-            userProfile.addSkill(StringUtils.capitalize(skill.toLowerCase()));
+            userProfile.addSkill(skill);
             userProfileRepository.save(userProfile);
         }
 
         return "works";
     }
 
-    public String addCertifications(UserProfile userProfile, String cert){
+    public String addCertifications(UserProfile userProfile, Certification cert){
         boolean userExists = userProfileRepository.findByEmail(userProfile.getEmail())
                 .isPresent();
 
         if(!userExists){
             throw new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG,userProfile.getUsername()));
         }else{
-            userProfile.addCertifications(StringUtils.capitalize(cert.toLowerCase()));
+            userProfile.addCertifications(cert);
             userProfileRepository.save(userProfile);
         }
 
         return "works";
     }
 
-    public String removeSkills(UserProfile userProfile, String skill){
+    public String removeSkills(UserProfile userProfile, Skill skill){
         //firstly does user exist?
 
         boolean userExists = userProfileRepository.findByEmail(userProfile.getEmail())
@@ -100,21 +105,21 @@ public class UserProfileService {
         if(!userExists){
             throw new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG,userProfile.getUsername()));
         }else{
-            userProfile.removeSkill(StringUtils.capitalize(skill.toLowerCase()));
+            userProfile.removeSkill(skill);
             userProfileRepository.save(userProfile);
         }
 
         return "works";
     }
 
-    public String removeCertifications(UserProfile userProfile, String cert){
+    public String removeCertifications(UserProfile userProfile, Certification cert){
         boolean userExists = userProfileRepository.findByEmail(userProfile.getEmail())
                 .isPresent();
 
         if(!userExists){
             throw new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG,userProfile.getUsername()));
         }else{
-            userProfile.removeCertifications(StringUtils.capitalize(cert.toLowerCase()));
+            userProfile.removeCertifications(cert);
             userProfileRepository.save(userProfile);
         }
 
@@ -127,15 +132,19 @@ public class UserProfileService {
     public List<UserProfile> findAllByJobTitle(String title){
         return userProfileRepository.findAllByJobTitleContainsIgnoreCase(title);
     }
-    public List<UserProfile> findAllByCertification(String cert){
-        return userProfileRepository.findAllByCertificationsContainsIgnoreCase(cert);
+    public List<UserProfile> findAllByCertification(Certification cert){
+        return userProfileRepository.findAllByCertifications(cert);
     }
-    public List<UserProfile> findAllBySkill(String skill){
-        return userProfileRepository.findAllBySkillsContainsIgnoreCase(skill);
+    public List<UserProfile> findAllBySkill(Skill skill){
+        return userProfileRepository.findAllBySkills(skill);
     }
 
 
     public List<UserProfile> findAll() {
         return userProfileRepository.findAll();
+    }
+
+    public void saveChange(UserProfile user) {
+        userProfileRepository.save(user);
     }
 }

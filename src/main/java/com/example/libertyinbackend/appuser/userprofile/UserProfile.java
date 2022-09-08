@@ -1,14 +1,13 @@
 package com.example.libertyinbackend.appuser.userprofile;
 
-import com.example.libertyinbackend.appuser.AppUser;
-import com.example.libertyinbackend.appuser.AppUserRole;
+import com.example.libertyinbackend.appuser.userprofile.misc.certifications.Certification;
+import com.example.libertyinbackend.appuser.userprofile.misc.skills.Skill;
 import com.example.libertyinbackend.appuser.userprofile.team.Team;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Getter
 @Setter
@@ -33,16 +32,15 @@ public class UserProfile {
     private String lastName;
     private String email;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "team_id")
-    private Team teamName;
+    @ManyToOne
+    private Team team;
 
-    @ElementCollection
+    @OneToMany
     @CollectionTable(name = "user_profile_skills", joinColumns = @JoinColumn(name = "user_id"))
-    private Collection<String> skills = new ArrayList<>();
-    @ElementCollection
+    private Collection<Skill> skills = new ArrayList<>();
+    @OneToMany
     @CollectionTable(name = "user_profile_certifications", joinColumns = @JoinColumn(name = "user_id"))
-    private Collection<String> certifications = new ArrayList<>();
+    private Collection<Certification> certifications = new ArrayList<>();
     private String profilePic;
     private String jobTitle;
 
@@ -60,26 +58,26 @@ public class UserProfile {
         return email;
     }
 
-    public void addSkill(String skill){
+    public void addSkill(Skill skill){
         if(!skills.contains(skill)){
             skills.add(skill);
         }
     }
 
-    public void addCertifications(String cert){
+    public void addCertifications(Certification cert){
         if(!certifications.contains(cert)){
             certifications.add(cert);
         }
     }
 
 
-    public void removeSkill(String skill) {
+    public void removeSkill(Skill skill) {
         if(skills.contains(skill)){
             skills.remove(skill);
         }
     }
 
-    public void removeCertifications(String cert) {
+    public void removeCertifications(Certification cert) {
         if(certifications.contains(cert)){
             certifications.remove(cert);
         }

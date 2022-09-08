@@ -15,7 +15,6 @@ import static com.example.libertyinbackend.appuser.AppUserRole.USER;
 
 
 @SpringBootApplication
-@EnableConfigurationProperties
 public class LibertyInBackendApplication {
 
     public static void main(String[] args) {

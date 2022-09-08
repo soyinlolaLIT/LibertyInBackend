@@ -2,6 +2,8 @@ package com.example.libertyinbackend.appuser.userprofile;
 
 
 import com.example.libertyinbackend.appuser.AppUser;
+import com.example.libertyinbackend.appuser.userprofile.misc.certifications.Certification;
+import com.example.libertyinbackend.appuser.userprofile.misc.skills.Skill;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,8 +30,8 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
     // email,
     List<UserProfile> findAllByEmailContainsIgnoreCase(String email);
     // skills,
-    List<UserProfile> findAllBySkillsContainsIgnoreCase(String skill);
+    List<UserProfile> findAllBySkills(Skill skill);
     // certifications
-    List<UserProfile> findAllByCertificationsContainsIgnoreCase(String title);
+    List<UserProfile> findAllByCertifications(Certification title);
 
 }

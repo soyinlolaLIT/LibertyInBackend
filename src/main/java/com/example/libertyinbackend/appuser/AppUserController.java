@@ -4,9 +4,14 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.libertyinbackend.appuser.dto.DataInput;
 import com.example.libertyinbackend.appuser.dto.Input;
 import com.example.libertyinbackend.appuser.userprofile.UserProfile;
 import com.example.libertyinbackend.appuser.userprofile.UserProfileService;
+import com.example.libertyinbackend.appuser.userprofile.misc.certifications.Certification;
+import com.example.libertyinbackend.appuser.userprofile.misc.certifications.CertificationService;
+import com.example.libertyinbackend.appuser.userprofile.misc.skills.Skill;
+import com.example.libertyinbackend.appuser.userprofile.misc.skills.SkillService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +45,18 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 public class AppUserController {
 
+    @Autowired
     private final AppUserService appUserService;
+    @Autowired
     private final UserProfileService userProfileService;
+
+    @Autowired
+    private final SkillService skillService;
+
+    @Autowired
+    private final CertificationService certificationService;
+
+    //TODO: import skillService and certificationService
 
     //discover related endpoints
     @GetMapping("/users")
@@ -49,25 +64,29 @@ public class AppUserController {
         return ResponseEntity.ok().body(userProfileService.findAll());
     }
 
-    @PostMapping("/users/email")
+    @GetMapping("/users/email")
     public ResponseEntity<List<UserProfile>> getUsersByEmail(@RequestBody Input input){
         return ResponseEntity.ok().body(userProfileService.findAllByEmail(input.getInput()));
     }
 
-    @PostMapping("/users/title")
+    @GetMapping("/users/retrieve")
+    public ResponseEntity<UserProfile> getUserByEmail(@RequestBody Input input){
+        return ResponseEntity.ok().body(userProfileService.loadUserByUsername(input.getInput()));
+    }
+
+    @GetMapping("/users/title")
     public ResponseEntity<List<UserProfile>> getUsersByTitle(@RequestBody Input input){
         return ResponseEntity.ok().body(userProfileService.findAllByJobTitle(input.getInput()));
     }
 
-    //needs work
-    @PostMapping("/users/skill")
+    @GetMapping("/users/skill")
     public ResponseEntity<List<UserProfile>> getUsersBySkill(@RequestBody Input input){
-        return ResponseEntity.ok().body(userProfileService.findAllBySkill(input.getInput()));
+        return ResponseEntity.ok().body(userProfileService.findAllBySkill(skillService.loadSkillByName(input.getInput())));
     }
 
-    @PostMapping("/users/cert")
+    @GetMapping("/users/certification")
     public ResponseEntity<List<UserProfile>> getUsersByCert(@RequestBody Input input){
-        return ResponseEntity.ok().body(userProfileService.findAllByCertification(input.getInput()));
+        return ResponseEntity.ok().body(userProfileService.findAllByCertification(certificationService.loadCertificationByName(input.getInput())));
     }
 
     //all account related endpoints
@@ -91,35 +110,51 @@ public class AppUserController {
     }
 
     @PutMapping("/account/add_skill")
-    public void addSkill(Authentication authentication, @RequestBody Input input){
+    public void addSkill(Authentication authentication, @RequestBody DataInput input){
         AppUser appUser = (AppUser)appUserService.loadUserByUsername(authentication.getName());
         UserProfile userProfile = userProfileService.loadUserByUsername(appUser.getUsername());
-        userProfileService.addSkills(userProfile,input.getInput());
+        Skill skill = skillService.skillExists(input.getName()) ? skillService.loadSkillByName(input.getName())
+                : new Skill(input.getName(),input.getDescription());
+        if(!skillService.skillExists(input.getName())){
+            skillService.save(skill);
+        }
+        userProfileService.addSkills(userProfile,skill);
     }
 
     @PutMapping("/account/add_certification")
-    public void addCertification(Authentication authentication, @RequestBody Input input){
+    public void addCertification(Authentication authentication, @RequestBody DataInput input){
         AppUser appUser = (AppUser)appUserService.loadUserByUsername(authentication.getName());
         UserProfile userProfile = userProfileService.loadUserByUsername(appUser.getUsername());
-        userProfileService.addCertifications(userProfile,input.getInput());
+        Certification cert = certificationService.certificationExists(input.getName()) ? certificationService.loadCertificationByName(input.getName())
+                : new Certification(input.getName(),input.getDescription());
+        if(!certificationService.certificationExists(input.getName())){
+            certificationService.save(cert);
+        }
+
+        userProfileService.addCertifications(userProfile,cert);
     }
 
     @DeleteMapping("/account/remove_skill")
     public void removeSkill(Authentication authentication, @RequestBody Input input){
         AppUser appUser = (AppUser)appUserService.loadUserByUsername(authentication.getName());
         UserProfile userProfile = userProfileService.loadUserByUsername(appUser.getUsername());
-        userProfileService.removeSkills(userProfile,input.getInput());
+        if(skillService.skillExists(input.getInput())){
+            userProfileService.removeSkills(userProfile,skillService.loadSkillByName(input.getInput()));
+        }
     }
 
     @DeleteMapping("/account/remove_certification")
     public void removeCertification(Authentication authentication, @RequestBody Input input){
         AppUser appUser = (AppUser)appUserService.loadUserByUsername(authentication.getName());
         UserProfile userProfile = userProfileService.loadUserByUsername(appUser.getUsername());
-        userProfileService.removeCertifications(userProfile,input.getInput());
+        if(certificationService.certificationExists(input.getInput())){
+            userProfileService.removeCertifications(userProfile,certificationService.loadCertificationByName(input.getInput()));
+        }
     }
 
 
 
+    //refactoring to be done here, lots of redundant code
     @PostMapping("/token/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
