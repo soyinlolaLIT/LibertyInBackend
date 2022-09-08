@@ -64,27 +64,27 @@ public class AppUserController {
         return ResponseEntity.ok().body(userProfileService.findAll());
     }
 
-    @GetMapping("/users/email")
+    @PutMapping("/users/email")
     public ResponseEntity<List<UserProfile>> getUsersByEmail(@RequestBody Input input){
         return ResponseEntity.ok().body(userProfileService.findAllByEmail(input.getInput()));
     }
 
-    @GetMapping("/users/retrieve")
+    @PutMapping("/users/retrieve")
     public ResponseEntity<UserProfile> getUserByEmail(@RequestBody Input input){
         return ResponseEntity.ok().body(userProfileService.loadUserByUsername(input.getInput()));
     }
 
-    @GetMapping("/users/title")
+    @PutMapping("/users/title")
     public ResponseEntity<List<UserProfile>> getUsersByTitle(@RequestBody Input input){
         return ResponseEntity.ok().body(userProfileService.findAllByJobTitle(input.getInput()));
     }
 
-    @GetMapping("/users/skill")
+    @PutMapping("/users/skill")
     public ResponseEntity<List<UserProfile>> getUsersBySkill(@RequestBody Input input){
         return ResponseEntity.ok().body(userProfileService.findAllBySkill(skillService.loadSkillByName(input.getInput())));
     }
 
-    @GetMapping("/users/certification")
+    @PutMapping("/users/certification")
     public ResponseEntity<List<UserProfile>> getUsersByCert(@RequestBody Input input){
         return ResponseEntity.ok().body(userProfileService.findAllByCertification(certificationService.loadCertificationByName(input.getInput())));
     }
