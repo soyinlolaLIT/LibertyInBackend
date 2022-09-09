@@ -32,8 +32,7 @@ public class UserProfile {
     private String lastName;
     private String email;
 
-    @ManyToOne
-    private Team team;
+    private String team;
 
     @OneToMany
     @CollectionTable(name = "user_profile_skills", joinColumns = @JoinColumn(name = "user_id"))

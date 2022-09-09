@@ -30,6 +30,11 @@ public class TeamController {
         return ResponseEntity.ok().body(teamService.getAll());
     }
 
+    @PutMapping("/name")
+    public ResponseEntity<Team> getTeamByName(@RequestBody Input input){
+        return ResponseEntity.ok().body(teamService.loadTeamByName(input.getInput()));
+    }
+
     // make so that I can create a team with just a string
     @PostMapping("/create")
     public void createTeam(@RequestBody Input name){
@@ -44,7 +49,7 @@ public class TeamController {
         Team team = teamService.loadTeamByName(request.getTeam());
 
         //add to the team
-        user.setTeam(team);
+        user.setTeam(team.getName());
         team.addMember(user);
 
         //save in both repositories
