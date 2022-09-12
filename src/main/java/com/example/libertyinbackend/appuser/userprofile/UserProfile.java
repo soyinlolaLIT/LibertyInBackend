@@ -34,10 +34,10 @@ public class UserProfile {
 
     private String team;
 
-    @OneToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @CollectionTable(name = "user_profile_skills", joinColumns = @JoinColumn(name = "user_id"))
     private Collection<Skill> skills = new ArrayList<>();
-    @OneToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @CollectionTable(name = "user_profile_certifications", joinColumns = @JoinColumn(name = "user_id"))
     private Collection<Certification> certifications = new ArrayList<>();
     private String profilePic;
