@@ -1,8 +1,12 @@
 package com.example.libertyinbackend.appuser.userprofile.misc.skills;
 
+import com.example.libertyinbackend.appuser.userprofile.UserProfile;
 import lombok.*;
+import org.apache.catalina.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -24,6 +28,7 @@ public class Skill {
     private String name;
     private String description;
 
+
     public Skill(String name){
         this.name = name;
     }
@@ -32,4 +37,5 @@ public class Skill {
         this.name = name;
         this.description = description;
     }
+
 }

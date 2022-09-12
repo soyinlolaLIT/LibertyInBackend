@@ -15,13 +15,13 @@ import javax.persistence.*;
 public class Certification {
     @Id
     @SequenceGenerator(
-            name = "skill_sequence",
-            sequenceName = "skill_sequence",
+            name = "certification_sequence",
+            sequenceName = "certification_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "skill_sequence"
+            generator = "certification_sequence"
     )
     private Long id;
     private String name;
